@@ -1,9 +1,9 @@
 ---
 name: User Stories template
 about: Custom Template for User Stories
-title: ''
+title: "[USER STORY]"
 labels: ''
-assignees: ''
+assignees: Bear81
 
 ---
 
