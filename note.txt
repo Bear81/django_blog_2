@@ -1,0 +1,80 @@
+Inside migrations
+You've already made and applied migrations to your database. In this topic, we will discuss what a migration is, what happens when you make migrations, and why you need to know this.
+
+Challenge
+To understand migrations better, let's look at some.
+
+Part 1:
+
+In the blog directory, open the migrations directory and open the file named 0001_initial.py:
+
+What do you think is happening in the operations section of the code?
+Part 2:
+
+At the end of the Models lesson, you created a new field in the Post model called excerpt:
+
+At the terminal, type python3 manage.py makemigrations. What happens to your migrations directory?
+In the blog directory, open the migrations directory and open the file named 0002_post_excerpt.py. Read through the file.
+What do you think the dependencies mean?
+What operations are to be carried out?
+At the terminal, type python3 manage.py migrate. What do you think the difference between makemigrations and migrate is ?
+Explanation
+Part 1:
+
+The operations list in 0001_initial.py tells Django what changes to make to the database. In this case, the changes are to create a model named Post. The fields list contains exactly the same field names and types that you created in your model in models.py.
+Part 2:
+
+The new migrations file was created when you typed the makemigrations command. Django saw that your model had changed and that this change needed to be reflected in the database. The files are numbered sequentially, and the filename gives you an idea of what each migration does without you having to read through the file. Because each migration is numbered, you can reapply specific migrations if you wish.
+Inside the file:
+You will see a dependencies list. This list contains tuples that consist of the app name, in this case blog and the migrations that must be applied before this one can be. In our case, that is 0001_initial, the file we just looked at. This dependency is logical because we cannot add a field to a model if the model does not yet exist.
+The operations list then carries out the changes to the database. In this migration file, we are adding a field. We only have one operation in our list, but if we were adding multiple fields or even another model, then they would appear here too.
+makemigrations creates the migrations file locally, whereas the changes are applied to the database when you run the migrate command.
+So, what are migrations?
+As a kid, I enjoyed building with LEGO. Starting with something basic, I could extend and grow it until I ran out of blocks. In a sense, Django's models and migrations are like building with LEGO(bear with me on this).
+
+We can liken the model to the basic blueprint or plan of our LEGO project. When the basic model is in place, the makemigrations command creates a file. This file is like a set of LEGO building instructions that Django creates for you, listing all the pieces (or data fields) you've added, removed, or changed in your model.
+
+Every time we run the migrate command, Django follows our LEGO building instructions to build or modify our database model. We need to make migrations and migrate every time we change a database model.
+
+Creating a dry-run
+If you want to see what migrations would be made to your database without actually creating the migration, you can do what's called a dry run. To do this, call makemigrations with the - -dry-run switch like this:
+
+python3 manage.py makemigrations - -dry-run
+If you are happy with what you see, you must then run makemigrations normally.
+
+Top tip! It follows that it's a good idea to keep our migrations quite tightly focused, as we do with our git commits. Don't add or change too many features all at once, but make migrations after one or more smaller changes.
+
+Test your knowledge
+Using what you have learned, add a field called updated_on to the Post model.
+The field is the same type as created_on but should have the argument of auto_now = True instead.
+Save the models.py file. Try doing a dry-run when making your migrations first
+what happens? Don't forget to make the migrations again without the dry-run after.
+What do you think the dependencies and operations lists will contain this time? Open the 0003_post_updated_on file to see if you were correct.
+Apply the migration to the database.
+Solution
+Your model code should now look like this:
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="blog_posts"
+    )
+    content = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(choices=STATUS, default=0)
+    excerpt = models.TextField(blank=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+
+The auto_now argument for the updated_on field sets the value to the current date and time whenever the record is saved, not just when it is created.
+A dry-run will let you see what migrations would be made to your database without actually creating the migration files. You then need to follow this by actually making your migrations without the dry-run after.
+This time, the dependencies refer to the previous migration, 0002_post_excerpt, and the operations are to add a field with the details we gave.
+Type python3 manage.py migrate at the terminal to apply the migrations to the database.
+Review
+In this topic, we learned what a migration is . We also looked deeper into what happens when we make a migration and learned something about my childhood obsession with LEGO! In our next topic, we'll take a deeper look into the admin.py file and see how we can use it to customise our admin page experience.
+
+Don't forget to add, commit and push your project to GitHub before continuing.
