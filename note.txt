@@ -1,3 +1,1467 @@
+## Create the project and blog app
+
+In the previous two topics you got an overview of the blog you will produce and wrote the user stories for the project.
+
+Now it's time to create a new workspace for your blog.
+
+- Challenge
+    
+    By the end of this challenge, you will have a blog web app with the functionality to display a line of text in the browser.
+    
+    To complete the challenge, you will need to:
+    
+    1. Open your GitHub repo with your IDE.
+    2. Install the long-term supported (LTS) release of  Django version 4.
+    3. Create a new project named **codestar**.
+    4. Create the new app named **blog**.
+    5. Return an HTTP response of the text string **"Hello, Blog!"**, when displayed on the webpage.
+    
+
+- Steps
+    
+    Part 1 - Creating the new project:
+    
+    1. Open your GitHub repository in a new IDE workspace.
+    2. Use **pip3** to install Django version **~=4.2.1** as it is the long-term supported (LTS) version of the Django package at the time of writing.
+    3. Freeze the packages to the requirements file using **pip3**.
+    4. Create a new project named **codestar** using the appropriate Django command with a dot at the end to signify the current directory level.
+    
+    Part 2 - Creating the new app:
+    
+    1. Create a new app named **blog** using the appropriate Django command.
+    2. Add the new app to the list of installed apps in the **settings.py** file.
+    3. In the **blog/views.py** file:
+        1. Add an import for `HttpResponse` from `django.http` at the top of the file.
+        2. add a function to return the text string **"Hello, Blog!"**.
+    4. In **codestar/urls**:
+        1. Import the appropriate views file.
+        2. Add the new path **‘blog/’** into the urlpatterns.
+    
+    Part 3 - Running the server:
+    
+    1. Run the server in a browser window, to test if your code works. **Note**: You may see an error the first time you run the code. Review this error. Can you remember how to fix it?
+    2. You should now see the text **"Hello, Blog!"** displayed on the page.
+    
+- Hints
+    
+    Part 1 - Creating the new project:
+    
+    1. Have you installed Django using the following command in the terminal?
+        1. ```
+            pip3 install Django~=4.2.1
+            ```
+            
+    2. Have you added the package to the **requirements.txt** file with the following command?
+        1. ```
+            pip3 freeze local > requirements.txt
+            ```
+            
+    3. Have you created the new project, **codestar**, using the Django built-in function from the django-admin command-line utility?
+        1. ```
+            django-admin startproject codestar .
+            ```
+            
+    
+    Part 2: Creating the new app:
+    
+    1. Have you created the new app: **blog**, using the Django built-in function from the manage.py file?
+        1. ```
+            python3 manage.py startapp blog
+            ```
+            
+    2. In **settings.py**, have you added the app to the list of installed apps? Have you surrounded the app name in single quotes, and used a trailing comma?
+        1. ```
+            INSTALLED_APPS = [
+                'django.contrib.admin',
+                'django.contrib.auth',
+                'django.contrib.contenttypes',
+                'django.contrib.sessions',
+                'django.contrib.messages',
+                'django.contrib.staticfiles',
+                'blog',
+            ]
+            ```
+            
+    3. In **views.py**, have you imported `HttpResponse` from `django.http` at the top of the file? Have you used a comma to separate the imports?
+        1. ```
+            from django.http import HttpResponse
+            ```
+            
+    4. Have you added the following view function to return a `HttpResponse` of **"Hello, Blog!"**?
+        1. ```
+            def my_blog(request):
+            return HttpResponse("Hello, Blog!")
+            ```
+            
+    5. In **codestar/urls.py**:
+        1. Have you imported the `my_blog` view?
+            - ```
+                from blog.views import my_blog
+                ```
+                
+        2. Have you added the new path to the `urlpatterns`?
+            - ```
+                path('blog/', my_blog, name='blog'),
+                ```
+                
+    
+    Part 3 - Running the server:
+    
+    1. Have you run the Django server in the terminal?
+        1. ```
+            python3 manage.py runserver
+            ```
+            
+    2. Have you opened port **8000** as a preview or in a browser tab?
+    3. Have you copied/pasted the hostname between the square brackets of `ALLOWED_HOSTS` in the **codestar/settings.py** file, and saved it?
+    4. Have you appended **/blog** to the end of the URL in the browser?
+    5. Have you confirmed the text is displayed on the page? **"Hello, Blog!"**
+    
+- Solution
+    
+    See the [source code link](https://github.com/Code-Institute-Solutions/blog/tree/main/01_getting_set_up/01_create_project_app) to check your code against the solution.
+    
+- Review
+    
+    You now have a working blog app in your project. Several Python files have been created within the blog app directory. These files are where you will write code to, for example, create, read, update and delete the blog entries.
+    
+    The steps in this topic are the same for every new Django project, so repetition of them will build confidence in your newfound Django skills.
+    
+    In the next topic, your challenge is to deploy your project.
+    
+    **Note:** Make sure to add, commit, and push to your GitHub repo when finished.
+
+
+## Deploy the project challenge
+
+In the previous topic, you created a Django project with a blog app. In this topic, you are challenged to deploy your project to Heroku.
+
+- Challenge
+    
+    The purpose of this challenge is to have a hosted Django project. To complete the challenge, you will need to fulfil the following requirements.
+    
+    1. Create the Heroku app with a unique name hosted on a cloud server in your region.
+        1. **Note:** No Django static file collection will be required during the build.
+    2. Update your code for deployment, e.g. using `gunicorn`, which will be required, rather than Django’s `runserver`.
+    3. Deploy to Heroku.
+    
+- Steps
+    
+    Part 1 - Create the Heroku app:
+    
+    1. Navigate to your [Heroku dashboard](https://heroku.com/) and create a new app with a unique name in a region close to you.
+    2. In your new app’s settings tab, ensure the Config Var **DISABLE_COLLECTSTATIC** key has a value of **1**.
+    
+    Part 2 - Update your code for deployment:
+    
+    1. Use **pip3** to install `gunicorn~=20.1` and freeze it to the **requirements.txt** file.
+    2. In the **Procfile**, add a command using **gunicorn** and **codestar wsgi** file to start the webserver.
+    3. In the **codestar/settings.py** file, set the `DEBUG` constant to `False` and append the `'.herokuapp.com'` hostname to the `ALLOWED_HOSTS` list.
+        1. **Top tip!** It's a good habit to always set `DEBUG` to `False` before any deployment. Once you have completed deployment, you can set it back to `True` locally to continue development.
+    4. Git add, commit and push the code to your GitHub repo.
+    
+    Part 3 - Deploy to Heroku:
+    
+    1. In your new app’s **Deploy** tab, search for your GitHub repo and connect it to the Heroku app. Manually deploy the **main** branch of this GitHub repo.
+        1. In your new app’s resources tab, ensure you are using an eco dyno and delete any Postgres database Add-on.
+    2. Click **Open app** to open the webpage and append **/blog** to the URL in the browser bar to see  the text **"Hello, blog!"**.
+    
+- Hints
+    
+    Part 1 - Create the Heroku app:
+    
+    1. Have you referred back to the deploying to Heroku text step topic to create your Heroku app?
+    2. Have you added a key of **DISABLE_COLLECTSTATIC** and a value of **1** and clicked **Add**?
+        1. Find this in the **Config Vars** section of the **Settings** tab.
+    
+    Part 2 - Update your code for deployment:
+    
+    1. Have you `pip3` installed the webserver `gunicorn` and added it to the project requirements?
+        1. ```
+            pip3 install gunicorn~=20.1
+            pip3 freeze --local > requirements.txt
+            ```
+            
+    2. Have you created a **Procfile** at the root directory of the project, declared the process as `web` and added a start command?
+        1. ```
+            web: gunicorn codestar.wsgi
+            ```
+            
+        2. **Hint**: Note there is a space after the colon.
+        3. **Hint**: The **Procfile** has no file extension.
+    3. Have you changed `DEBUG` to `False` and added `, '``.herokuapp.com'` to the `ALLOWED_HOSTS`?
+        1. ```
+            DEBUG = False
+            ```
+            
+        2. ```
+            ,'.herokuapp.com'
+            ```
+            
+        3. **Hint**: Remember the comma and the dot before `herokuapp`.
+    4. Push the code to GitHub.
+        1. ```
+            git add .
+            git commit -m "readies code for deploy"
+            git push origin main
+            ```
+            
+    
+    Part 3 - Deploy to Heroku:
+    
+    1. Have you clicked on the **Deploy** tab in your Heroku app dashboard, connected to your GitHub repo and clicked on **Deploy Branch**?
+    
+    1. **Hint**: Start typing your project repo name into the search box and click on the GitHub repo you want to deploy from.
+    2. After manually deploying the main branch, you can view the build output in the application’s **Activity** tab in the dashboard.
+    
+    1.  Have you clicked the **Open app** button to see your deployed app?
+        1. **Hint**: The build must be complete before you can open the app.
+        2. **Hint**: You will see an error that the current path didn’t match any of the URL patterns as you have not written the urlpattern yet.
+        3. Append **/blog** to the app URL to see the text.
+    
+- Solution
+    
+    See the [source code link](https://github.com/Code-Institute-Solutions/blog/tree/main/01_getting_set_up/02_deploy_project) to check your code against the solution.
+    
+- Review
+    
+    In this topic, you deployed your new app. This is the same deployment procedure you followed in **The Basics > Deploying to Heroku** lesson.
+    
+    The steps in this topic are the same for every new Django project deployment, so repetition of them will build confidence in your newfound Django skills.
+    
+    In the next lesson, you will learn about Django models.
+
+
+Creating the database
+
+In these text-based steps, we will create an instance of a cloud-based PostgreSQL database and connect it to our project.
+
+  
+
+Follow the steps below to get up and running.
+
+  
+
+Create PostgreSQL instance
+
+1. Navigate to PostgreSQL from Code Institute.
+
+  
+
+PostgreSQL from Code Institute landing page and URL
+
+2. Enter your student email address in the input field provided.
+
+  
+
+an input field with a student email address entered
+
+3. Click Submit.
+
+  
+
+a submit button
+
+4. Wait while the database is created.
+
+  
+
+a loading screen showing cogs in motion
+
+5. Your database is successfully created! Please review the email sent to your student email inbox.
+
+  
+
+a success page following successful database creation
+
+Connect database to code
+
+6. Return to your workspace and open the codestar/settings.py file. Change the value of DEBUG back to True as this will ensure that you get detailed errors to ease debugging during development.
+
+  
+
+Set DEBUG constant value to True
+
+7. Create a file named env.py at the top level of the project. You can either create a new file in the file structure or use the terminal command as shown.
+
+  
+
+Create a Python file
+
+8. Open the .gitignore file and add env.py to prevent the secret data you will add to it from being pushed to GitHub.
+
+  
+
+Note: If you have used a codeinstitute template then it will be there already.
+
+  
+
+Prevent env.py being pushed to GitHub repo
+
+9. In your newly created env.py file, import Python's operating system module and use it to set the value of the DATABASE_URL constant to the URL in the email you received from PostgreSQL from Code Institute.
+
+  
+
+import os
+
+  
+
+os.environ.setdefault(
+
+    "DATABASE_URL", "<your-database-URL>")
+
+Note: Remember the quotes around the constant and your URL as the setdefault() method expects string values as parameters.
+
+  
+
+Add DB URL to the env.py file
+
+10. Pip install the two packages required to connect to your PostgreSQL database. Then add them to the requirements file:
+
+  
+
+pip3 install dj-database-url~=0.5 psycopg2~=2.9
+
+pip3 freeze --local > requirements.txt
+
+Note: psycopg2 is a driver for interacting with PostgreSQL databases using Python. The dj-database-url Python package is a utility to connect Django to a database using a URL.
+
+  
+
+Pip install db packages
+
+11. In codestar/settings.py, import the appropriate packages (Note: You will use dj_database_url in a later step). Now we connect the settings.py file to the env.py file:
+
+  
+
+import os
+
+import dj_database_url
+
+if os.path.isfile('env.py'):
+
+    import env
+
+Add imports to settings
+
+12. Next in the settings.py file, we need to comment out the local sqlite3 database connection.
+
+  
+
+Note: Django provides this local sqlite3 database by default for development, but we are going to go with a production-ready PostgreSQL cloud database instead.
+
+  
+
+Comment out the sqlite3 db
+
+13. Then, in the settings.py file, connect to the environment variable DATABASE_URL you previously added to the env.py file:
+
+  
+
+DATABASES = {
+
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+
+}
+
+Connect Django to the Database URL
+
+14. Now that your project is connected to the database, you can create database tables with Django's migrate command:
+
+  
+
+python3 manage.py migrate
+
+Note: These tables are for data generated by the existing apps built into Django.
+
+  
+
+Create db tables
+
+Enter data into the database
+
+15. Let's enter our first data into the database. As Django comes with built-in auth and admin apps we can create a superuser with admin access to our database:
+
+  
+
+python3 manage.py createsuperuser
+
+Choose a memorable user name, use your email address and choose a secure password.
+
+  
+
+Note: Django will check your password security.
+
+  
+
+Create a new superuser
+
+Deploy the project
+
+16. Return to your workspace and open the codestar/settings.py file. Change the value of DEBUG back to False as this will ensure the production deployed app is secure.
+
+  
+
+Set the DEBUG value to False
+
+17. Git add, commit and push your updated code to GitHub.
+
+  
+
+Git push to GitHub
+
+18. Return to your Heroku dashboard and go to your blog app. Click on the Deploy tab.
+
+  
+
+Click on deploy tab
+
+19. Do a manual deployment.
+
+  
+
+Manually deploy the app
+
+Connect Heroku to the PostgreSQL database
+
+20. Once the deployment is complete click on Reveal Config Vars in the Settings tab.
+
+  
+
+Click the setting tab and then Reveal config vars
+
+21. You may see that Heroku has automatically added its own PostgreSQL DATABASE_URL. If so, we want to remove the Postgres database Heroku created and replace it with the free PostgreSQL from Code Institute one as Heroku's PostgreSQL database offering has a monthly fee.
+
+  
+
+Note: If Heroku has not automatically provisioned a PostgreSQL database add-on, skip to step 25.
+
+  
+
+Heroku has automatically provisioned a PostgreSQL database add-on
+
+22. To remove the Heroku database, click on the Resources tab.
+
+  
+
+Click on the resources tab
+
+23. Click Delete Add-on from the drop-down menu to the right of the Heroku Postgres Add-on. Confirm the removal of the add-on by typing your app's name into a popup.
+
+  
+
+Delete add-on db
+
+24. Now return to Settings and Reveal Config Vars.
+
+  
+
+Reveal the config vars
+
+25. Add a new config var with a key of DATABASE_URL and the value of the PostgreSQL from Code Institute URL.
+
+  
+
+Note: You can copy this from your env.py file (minus the quotes) or the email you received from PostgreSQL from Code Institute.
+
+  
+
+Config vars
+
+26. Now your deployed app is connected to your PostgreSQL cloud database.
+
+![[Pasted image 20240821155250.png]]
+
+Entity Relationship Diagrams
+![[Pasted image 20240821155527.png]]
+
+
+## Transcript 
+1. [Start of transcript. Skip to the end.](https://learn.codeinstitute.net/courses/course-v1:CodeInstitute+FSD101_WTS+4/courseware/713441aba05441dfb3a7cf04f3268b3f/0758f42698bf498382b68a9cb8e72483/?child=first#transcript-end-d7993c9d8e2d42ba9841da9302d489ff)
+2. Welcome to this introductory lesson on database models in Django.
+3. As we've said before, Django is a model view template framework.
+4. You've already created a basic view, so now it's time to focus on another
+5. critical component, database models.
+6. Put simply, a model is a Python class that defines the structure of a database table.
+7. Each model maps to a single table in the database, and defines the types of data
+8. that each field in the table can hold.
+9. As a result, when planning your models, you need to think about both your
+10. app and the data you want to store.
+11. In our blog project, for example, we have separate models
+12. for blog posts and comments.
+13. We'll also use the built-in user model to keep track of who wrote,
+14. liked, or commented on blog posts.
+15. As you've probably realised, to work properly, the models
+16. need to link to each other.
+17. The comment model needs to be linked to the blog post model.
+18. So that we know which post has been commented on.
+19. The post and comment models need to link to the user model,
+20. so we know who wrote what.
+21. These links are called relationships, and we'll explore those in detail too.
+22. It's a good idea to devote time to planning your models
+23. before you start coding.
+24. We recommend that you create Entity Relationship Diagrams, or ERDs like
+25. this, before you start writing code.
+26. These diagrams will help you to determine what each model will contain, and
+27. how your models relate to each other.
+28. We'll explain all of the terms in the ERD as we go along.
+29. And the content of your ERD is directly influenced by your user stories on GitHub.
+30. In this lesson then, you'll be introduced to models in Django.
+31. You'll learn about model relationships, and how Django
+32. talks to the database server.
+33. We'll also look at how your model becomes a database table on the server,
+34. which is something we call migrations.
+35. Finally, you'll also look at Django's built-in admin page, which
+36. we'll use to create blog posts.
+37. We have a lot to learn, so let's get started with an introduction
+38. to a simple blog post model.
+
+## Creating the database
+
+
+Creating the database
+
+In these text-based steps, we will create an instance of a cloud-based PostgreSQL database and connect it to our project.
+
+  
+
+Follow the steps below to get up and running.
+
+  
+
+Create PostgreSQL instance
+
+1. Navigate to PostgreSQL from Code Institute.
+
+  
+
+PostgreSQL from Code Institute landing page and URL
+
+2. Enter your student email address in the input field provided.
+
+  
+
+an input field with a student email address entered
+
+3. Click Submit.
+
+  
+
+a submit button
+
+4. Wait while the database is created.
+
+  
+
+a loading screen showing cogs in motion
+
+5. Your database is successfully created! Please review the email sent to your student email inbox.
+
+  
+
+a success page following successful database creation
+
+Connect database to code
+
+6. Return to your workspace and open the codestar/settings.py file. Change the value of DEBUG back to True as this will ensure that you get detailed errors to ease debugging during development.
+
+  
+
+Set DEBUG constant value to True
+
+7. Create a file named env.py at the top level of the project. You can either create a new file in the file structure or use the terminal command as shown.
+
+  
+
+Create a Python file
+
+8. Open the .gitignore file and add env.py to prevent the secret data you will add to it from being pushed to GitHub.
+
+  
+
+Note: If you have used a codeinstitute template then it will be there already.
+
+  
+
+Prevent env.py being pushed to GitHub repo
+
+9. In your newly created env.py file, import Python's operating system module and use it to set the value of the DATABASE_URL constant to the URL in the email you received from PostgreSQL from Code Institute.
+
+  
+
+import os
+
+  
+
+os.environ.setdefault(
+
+    "DATABASE_URL", "<your-database-URL>")
+
+Note: Remember the quotes around the constant and your URL as the setdefault() method expects string values as parameters.
+
+  
+
+Add DB URL to the env.py file
+
+10. Pip install the two packages required to connect to your PostgreSQL database. Then add them to the requirements file:
+
+  
+
+pip3 install dj-database-url~=0.5 psycopg2~=2.9
+
+pip3 freeze --local > requirements.txt
+
+Note: psycopg2 is a driver for interacting with PostgreSQL databases using Python. The dj-database-url Python package is a utility to connect Django to a database using a URL.
+
+  
+
+Pip install db packages
+
+11. In codestar/settings.py, import the appropriate packages (Note: You will use dj_database_url in a later step). Now we connect the settings.py file to the env.py file:
+
+  
+
+import os
+
+import dj_database_url
+
+if os.path.isfile('env.py'):
+
+    import env
+
+Add imports to settings
+
+12. Next in the settings.py file, we need to comment out the local sqlite3 database connection.
+
+  
+
+Note: Django provides this local sqlite3 database by default for development, but we are going to go with a production-ready PostgreSQL cloud database instead.
+
+  
+
+Comment out the sqlite3 db
+
+13. Then, in the settings.py file, connect to the environment variable DATABASE_URL you previously added to the env.py file:
+
+  
+
+DATABASES = {
+
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+
+}
+
+Connect Django to the Database URL
+
+14. Now that your project is connected to the database, you can create database tables with Django's migrate command:
+
+  
+
+python3 manage.py migrate
+
+Note: These tables are for data generated by the existing apps built into Django.
+
+  
+
+Create db tables
+
+Enter data into the database
+
+15. Let's enter our first data into the database. As Django comes with built-in auth and admin apps we can create a superuser with admin access to our database:
+
+  
+
+python3 manage.py createsuperuser
+
+Choose a memorable user name, use your email address and choose a secure password.
+
+  
+
+Note: Django will check your password security.
+
+  
+
+Create a new superuser
+
+Deploy the project
+
+16. Return to your workspace and open the codestar/settings.py file. Change the value of DEBUG back to False as this will ensure the production deployed app is secure.
+
+  
+
+Set the DEBUG value to False
+
+17. Git add, commit and push your updated code to GitHub.
+
+  
+
+Git push to GitHub
+
+18. Return to your Heroku dashboard and go to your blog app. Click on the Deploy tab.
+
+  
+
+Click on deploy tab
+
+19. Do a manual deployment.
+
+  
+
+Manually deploy the app
+
+Connect Heroku to the PostgreSQL database
+
+20. Once the deployment is complete click on Reveal Config Vars in the Settings tab.
+
+  
+
+Click the setting tab and then Reveal config vars
+
+21. You may see that Heroku has automatically added its own PostgreSQL DATABASE_URL. If so, we want to remove the Postgres database Heroku created and replace it with the free PostgreSQL from Code Institute one as Heroku's PostgreSQL database offering has a monthly fee.
+
+  
+
+Note: If Heroku has not automatically provisioned a PostgreSQL database add-on, skip to step 25.
+
+  
+
+Heroku has automatically provisioned a PostgreSQL database add-on
+
+22. To remove the Heroku database, click on the Resources tab.
+
+  
+
+Click on the resources tab
+
+23. Click Delete Add-on from the drop-down menu to the right of the Heroku Postgres Add-on. Confirm the removal of the add-on by typing your app's name into a popup.
+
+  
+
+Delete add-on db
+
+24. Now return to Settings and Reveal Config Vars.
+
+  
+
+Reveal the config vars
+
+25. Add a new config var with a key of DATABASE_URL and the value of the PostgreSQL from Code Institute URL.
+
+  
+
+Note: You can copy this from your env.py file (minus the quotes) or the email you received from PostgreSQL from Code Institute.
+
+  
+
+Config vars
+
+26. Now your deployed app is connected to your PostgreSQL cloud database.
+
+## Databases and deployment
+
+In this topic, we will delve deeper into the mechanism of database configuration and deployment in Django, focusing on setting and retrieving environment variables, such as secret keys, in **settings.py**. Understanding how to configure your database and manage environment variables is crucial for deploying a secure Django application.
+
+Prepare to uncover the secrets of `DATABASE_URL`, environment variables, and much more!
+
+- Challenge
+    
+    Let's work with what we know and what we have configured so far in our Django settings.
+    
+    **Part 1 - env.py:**
+    
+    1. When we created the **env.py** file, we added it to the **.gitignore** file. What is the result of doing this?
+    2. Can you remember where we got the `DATABASE_URL` value (that begins with `postgres://`) in the first place?
+    3. What do you think the `os.environ.setdefault` command does?
+    
+    **Part 2 - settings.py:**
+    
+    Now, open your settings.py file
+    
+    1. At the top of the page, can you remember what the `dj_database_url` import is used for?
+    2. What does the following code do? Why do you think we need to use an if statement when importing our env.py file?
+        1. ```
+            if os.path.isfile('env.py'):
+                import env
+            ```
+            
+    3. Locate the `DATABASES` configuration, what does the following code do?
+        1. ```
+            dj_database_url.parse(os.environ.get("DATABASE_URL"))
+            ```
+            
+    
+    **Part 3 - Heroku:**
+    
+    Go to the app's **Settings** tab on Heroku and click **Reveal Config Vars**.
+    
+    1. Why do you think we had to set the `DATABASE_URL` value separately in our Config Vars? Why doesn't it pick up the value from **env.py**?
+    
+- Explanation
+    
+    **Part 1 - env.py:**
+    
+    1. By adding the **env.py** file to **.gitignore**, it will not be tracked by git or pushed to GitHub. This keeps our secret information safe by not having it publicly available.
+    2. In the **env.py** file, the `DATABASE_URL` value was copied from our PostgreSQL from Code Institute email when we created our database instance.
+    3. The `os.environ.setdefault` command sets an environment variable in the local operating system**.** We supply the variable name and value in the parentheses. In our case, this is called **DATABASE_URL** and the value is the URL we copied from our PostgreSQL from Code Institute email.
+    
+    **Part 2 - settings.py:**
+    
+    1. The `dj_database_url` import is used to convert the database URL we copied from our PostgreSQL from Code Institute email into a format that Django can use to connect to an external database server.
+    2. The code uses another method from the `os` module to check if the **env.py** file path exists. If it does, then it will be imported. If it does not exist, the env import will not be attempted so that no error will occur. For example, when the app runs on Heroku, there will be no **env.py** file to load, as described above.
+    3. This code uses `os.environ.get` to get the value stored in the `DATABASE_URL` environment variable. The value is then parsed using `dj_database_url` to put it in a format that Django can use.
+    
+    **Part 3 - Heroku:**
+    
+    1. We need to set the environment variable separately on Heroku because, as we mentioned, our **env.py** file is not pushed to GitHub. This means that when our app is running on Heroku, it won't be able to import the database URL settings. We'll go into more detail on the reasons behind this below.
+    
+    ### So, what are environment variables?
+    
+    An environment variable is a variable that is set at the operating system (OS) level, rather than in code. The operating system is the local environment that your code runs in. These variables are like settings for your computer and for individual programs, allowing them to know specific information about the system, user preferences, and more. They help to customize the environment in which programs run, to make them more secure and adaptable.
+    
+    We set environment variables in Python by using `os.environ.setdefault` followed by the name and the value. 
+    
+    **Note**: You need to create a separate `setdefault` command for every environment variable you want to set.
+    
+    We can get the value of an environment variable by using `os.environ.get` followed by the name.
+    
+    ### Common environment variables
+    
+    Returning to `DATABASE_URL`, this special variable is set outside the codebase:
+    
+    1. When we are developing, this is in the **env.py** file.
+    2. When we deploy to Heroku - our production environment - we add the setting to Config Vars, which is Heroku's name for environment variables.
+    
+    This protects your database credentials from prying eyes.
+    
+    Another variable considered secret in Django is the `SECRET_KEY` in **settings.py**. This is a unique, secret, and random string that is used for cryptographic signing. That means that it ensures the integrity of the data stored in the cookies, forms, and much more, which is essential for the security of your Django application. This is the next thing we need to secure.
+    
+    So, in essence, think of these tools and strategies as your secret agents, working tirelessly behind the scenes to protect and streamline your Django mission. A well-guarded secret keeps the bad guys out!
+    
+    ### Keeping secrets secret
+    
+    Why do we set the `DATABASE_URL` variable in the environment rather than in the code? In the Django world, the `DATABASE_URL` is considered a secret. But why is that? It's because it contains sensitive information about your database, including the username, password, and database name. Keeping it a secret ensures the safety of your database from unwanted access. That's why we don't set it in code or allow our **env.py** file to be pushed to GitHub. Anyone with these details would have full access to your database. That is why we use an environment variable, which is just stored in memory on Heroku and is never shown to anyone else.
+    
+- Test your knowledge
+    
+    Now, it's time to secure our SECRET_KEY:
+    
+    **Part 1 - env.py:**
+    
+    1. Make up a new `SECRET_KEY` value. It can be any combination of letters, numbers and symbols. Make sure it is not something that can be guessed easily. If you like, you can use an online secret key generator, which you can search for online.
+    2. Once you have your secret key, set it as an environment variable in your **env.py** file.
+    
+    **Part 2 - settings.py:**
+    
+    1. Modify your **settings.py** file to retrieve the new `SECRET_KEY` from the environment variables.
+    
+    **Part 3 - Heroku:**
+    
+    1. To ensure the security of your Django app on Heroku, set the `SECRET_KEY` as a config variable on Heroku as well. **Note**: This doesn't have to be the same value as the one you added in **env.py**. It is considered good practice to have different ones.
+    2. Add, commit and push to GitHub and then redeploy your project.
+    
+- Solution
+    
+    **Part 1 - env.py:**
+    
+    Your **env.py** file should now look like this:
+    
+    ```
+    import os
+    
+    os.environ.setdefault(
+        "DATABASE_URL", "<your-database-URL>")
+    os.environ.setdefault("SECRET_KEY", "<your_choice_of_secret_key>")
+    ```
+    
+    **Part 2 - settings.py:**
+    
+    Your **settings.py** should look like this:
+    
+    ```
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    ```
+    
+    **Part 3 - Heroku:**
+    
+    A secret key value should be set on Heroku as a Config Var named `SECRET_KEY`.
+    
+    The changes will not take effect until the code is pushed to GitHub and redeployed on Heroku.
+    
+    **Note**: If you run both the local and browser app, and get no errors after adding the `SECRET_KEY` to both, it should mean the change has been successful.
+    
+- Review
+    
+    In this topic, we considered Django database configuration and deployment. You delved into the `DATABASE_URL` and `SECRET_KEY` environment variables and their roles in securing your Django application.
+
+Building the Post model
+
+In these text-based steps, we will build the Post model and connect it to the admin dashboard.
+
+  
+
+Precoding admin steps
+
+1. Move your "Manage posts" and "Create drafts" user stories into In Progress.
+
+  
+
+Move into in progress in Kanban
+
+2. Have an Entity Relationship Diagram on hand for your Post model.
+
+  
+
+An ERD for a post model
+
+Create the model code
+
+3. Return to your workspace and open the codestar/settings.py file. Change the value of DEBUG back to True as this will ensure that you get detailed errors to ease debugging during development.
+
+  
+
+Set DEBUG constant value to True
+
+4. Open your project workspace and open your blog/models.py file. Add a new import at the top for the User model.
+
+  
+
+from django.contrib.auth.models import User
+
+Import User model to blog models
+
+5. Create a class named Post below the comment inheriting from the Model class.
+
+  
+
+class Post(models.Model):
+
+Class Post inheriting from Model
+
+6. In the Post model, add an attribute title defined as a character field with a max length of 200 characters.
+
+  
+
+title = models.CharField(max_length=200, unique=True)
+
+Note: The title values should be unique to avoid having blog posts of the same name confusing your users.
+
+  
+
+Title field for the blog post
+
+7. In the Post model, add an attribute slug defined as a slug field with a max length of 200 characters.
+
+  
+
+slug = models.SlugField(max_length=200, unique=True)
+
+Note: In publishing, a slug is a short name for an article that is still in production. It comes from the lead casts used in print typesetting. You can tell Django was created for the newspaper industry! In Django, the slug is what you'll use to build a URL for each of your posts. You'll learn more about this in an upcoming lesson.
+
+  
+
+Slug field for the blog post
+
+8. In the Post model, add an attribute author defined as a Foreign Key to the User model.
+
+  
+
+author = models.ForeignKey(
+
+    User, on_delete=models.CASCADE, related_name="blog_posts"
+
+)
+
+Note: One user can write many posts, so this is a one-to-many or Foreign Key. The cascade on delete means that on the deletion of the user entry, all their posts are also deleted.
+
+  
+
+Author field for the blog post
+
+9. In the Post model, add an attribute content defined as a text field.
+
+  
+
+content = models.TextField()
+
+Note: This is the blog article content.
+
+  
+
+Content field for the blog post
+
+10. In the Post model, add an attribute created_on defined as a date time field.
+
+  
+
+created_on = models.DateTimeField(auto_now_add=True)
+
+Note: The auto_now_add=True means the default created time is the time of post entry.
+
+  
+
+Creation time field for the blog post
+
+11. In the Post model, add an attribute status defined as an integer field with a default of 0.
+
+  
+
+status = models.IntegerField(choices=STATUS, default=0)
+
+As you can see, this uses a constant STATUS. Create this constant above the class as a tuple.
+
+  
+
+STATUS = ((0, "Draft"), (1, "Published"))
+
+Note: A draft is defined as zero and published as one, so you can see the default is to save as a draft.
+
+  
+
+Status field for the blog post
+
+Use the model to update the database
+
+12. Now we have created a Post model we need to convert that Python class into instructions for the creation of the database table structure.
+
+  
+
+python3 manage.py makemigrations blog
+
+Note: A blog/migrations/0001_initial.py file is created containing the instructions on what table to build.
+
+  
+
+Make migrations file for blog Post model
+
+13. Now we need to create that table in the database.
+
+  
+
+python3 manage.py migrate blog
+
+Migrate blog Post model
+
+14. Open the blog/admin.py file, import the Post model and register it.
+
+  
+
+from .models import Post
+
+  
+
+# Register your models here.
+
+admin.site.register(Post)
+
+Note: This will allow you to create, update and delete blog posts from the admin panel. However, please refrain from adding any posts at the moment, as there are more fields to be added to the tables in an upcoming topic.
+
+  
+
+Register Post model
+
+15. Open the codestar/settings.py file and add the following code.
+
+  
+
+CSRF_TRUSTED_ORIGINS = [
+
+    "https://*.codeinstitute-ide.net/",
+
+    "https://*.herokuapp.com"
+
+]
+
+Note: This is a list of the trusted origins for requests. As shown, you need to add both your local development server URL domain and your production server URL domain to allow you to add blog post content from the admin dashboard. The subdomain is wildcarded with a *.
+
+  
+
+Add development and production URLs as trusted origins
+
+16. Return to the terminal and start the Django server, open the app, append /admin to the URL in the browser and log in as the superuser.
+
+  
+
+There is now a Posts option under Django Administration.
+
+  
+
+Important! Do not add a new post. When clicked, Add post allows you to add a post containing the same data fields you created in the Post model steps above. However, please refrain from adding a post at this time, as there are still other fields to be added to your Post model.
+
+  
+
+Admin dashboard
+
+17. Open the codestar/settings.py file and replace DEBUG = True with DEBUG = False.
+
+  
+
+DEBUG=False
+
+Deployment
+
+18. Git add, commit and push your code.
+
+  
+
+Git add, commit and push
+
+19. Do a manual deploy on Heroku.
+
+  
+
+Manually deploy the app
+
+20. Open the app, append /admin to the URL in the browser and log in as the superuser.
+
+  
+
+There is now a Posts option under Site Administration. Similar to the above step, do not add a new post at this time.
+
+  
+
+Note: If you access the admin dashboard on Heroku, it will appear unstyled as the CSS files have not been collected by Heroku. This collection will be done later in the course.
+
+
+Models
+
+Django apps use Python objects called models to access and manage data. The model defines the structure of the stored data using the field types. In this topic, we will dive deeper into models.py and the admin dashboard.
+
+  
+
+Challenge
+
+Run your app from the terminal and open the port in the browser, append /admin to the URL and log in as the superuser.
+
+  
+
+Click on the +Add next to the Posts option, to navigate to the /admin/blog/post/add/ URL path.
+
+  
+
+Important: Do not add any posts now, as other fields are still to be added to your Post model.
+
+  
+
+class Post(models.Model):
+
+    title = models.CharField(max_length=200, unique=True)
+
+    slug = models.SlugField(max_length=200, unique=True)
+
+    author = models.ForeignKey(
+
+        User, on_delete=models.CASCADE, related_name="blog_posts"
+
+    )
+
+    content = models.TextField()
+
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    status = models.IntegerField(choices=STATUS, default=0)
+
+In blog/models.py, match each attribute field type in the Post model to the corresponding HTML form input in the admin dashboard. What Python data type will each field type accept as an entry in the database table?
+
+Are there any missing form inputs when compared to the attributes in models.py? Why do you think this is missing?
+
+Why do you think status, an IntegerField, gives the option of Draft or Published rather than an integer 0 or 1?
+
+Do you think the string or the integer will be stored in the database table?
+
+The model name is Post, but the links in the breadcrumbs and to the left of the admin page are named Posts.
+
+What implications does this have when you come to name your own models? What would be displayed in the admin panel if you had named the model Posts?
+
+Explanation
+
+The fields and attributes match as follows:
+
+The title attribute with field type CharField() generates a single-line form input type text. It accepts Python string data type.
+
+The slug attribute with field type SlugField() also generates a single-line form input type text. It accepts Python string data type. A slug is a short label only containing letters, numbers, underscores or hyphens. You would use one as a semantic URL path rather than an integer or database row ID.
+
+The author attribute with field type ForeignKey() generates a select drop-down list prepopulated by User database table entries. In this case, as User instances are strings, then string data type options are accepted. This value will ultimately be used to display the author's name beside the post on the webpage.
+
+The content attribute with field type TextField() generates a multi-line textarea input. It accepts Python string data type.
+
+The status attribute with field type IntegerField() corresponds to the select drop-down list of Draft or Published. The IntegerField field type normally generates a number picker input, but this default has been overridden to display a select drop-down with string options.
+
+There is no Created on date picker input as we added the option auto_now_add=True, so the time used in the database table will be the computer's time when the Save button is pressed to submit the form.
+
+The option choices use the STATUS constant to limit the integer choice to 0 or 1 and has mapped these two integers to "Draft" and "Published". Therefore, the dropdown option values are "Draft" or "Published" rather than 0 or 1. These strings are more human-readable than the integers.
+
+Choices are a sequence of 2-tuples where the first value is stored in the database, and the second is displayed as the option in the select form input.
+
+You can also see that the default option for the database is 0, which is an integer.
+
+The model naming convention is to use the singular because the admin panel pluralises the model Post to the form Posts. If you named the model Posts, the admin panel would have Postss. You can also see the model User is pluralised to Users in the admin panel.
+
+What are Models?
+
+A Model is a Python class, and each attribute represents a database field. Each model in your models.py file maps directly to a single database table. Each attribute names a database column header, e.g. title, and the attributes field type, e.g. CharField, sets the data type the column will store. The field type is also a Python class defining the form field HTML input and validation requirements.
+
+  
+
+The blog project has multiple custom models, such as Post and Comment. It will also incorporate some of Django's built-in models, such as User, Group and Permission. These models and their attributes define the structure of, and communicate with, the database used for your blog.
+
+  
+
+Limiting data values with your model
+
+The field type options allow you to limit the data size and choices and add default values.
+
+  
+
+For example, in the Post model, we limited the status integer to 0 or 1 using the choices option. Without the choices field option, the IntegerField would default to an HTML number picker input. In a more complex example with many choices, you can define the choices within the model class using constants as shown here.
+
+  
+
+The beauty of a model is that you do not need to do any SQL queries, as Django does all the communication for you based on the model structure.
+
+  
+
+Naming conventions for using models
+
+As a Django Model is a Python class, the first letter gets capitalised, e.g. Post or User. Every model you create is a Python class that subclasses the parent class of models.Model.
+
+  
+
+When naming your field attribute, be careful not to choose a name that might conflict with database commands like clean, save or delete.
+
+  
+
+### Common field types
+
+|   |   |   |   |
+|---|---|---|---|
+|**Code**|   |**Result**|   |
+|**Field Type**|**Field options**|**Database**|**Admin form**|
+|`TextField`|`max_length`|No enforced text length.|Multi-line textarea input of max_length in size.|
+|`CharField`|`max_length`, `unique`|Small strings of less than `max_length`.|Single-line Textinput HTML widget with max length validation.|
+|`SlugField`|`max_length`, `allow_unicode`, `unicode`|Small strings containing only letters, numbers, underscores or hyphens of less than `max_length`.|Single-line Textinput HTML widget with max length and no spaces validation. Accepts Unicode if `allow_unicode=True`.|
+|`IntegerField`|`choices`|Integer values in a range supported by the database.|Number input HTML widget with max and min validation based on the database used.|
+|`ForeignKey`|Argument of the class to which the model is related. `on_delete`, `related_name`|Appends _id to the field name. Creates an index to the related database table.|Select containing options from the related database table values.|
+|`DateTimeField`|`auto_now_add`, `auto_now`|Python datetime.|With no options, a date input is used. `auto_now_add` sets date to creation date.|
+|`EmailField`|`max_length`|The max length option enforces this rule in the database.|This generates a text form widget similar to the `CharField` but includes email validation.|
+|`BooleanField`|`default`|You can set a default of `True` or `False` if you wish.|This is a true/false field which uses a checkbox form input.|
+
+Django has many more field type choices, and you can [review them here](https://docs.djangoproject.com/en/4.2/ref/models/fields/#model-field-types).
+  
+
+Test your knowledge
+
+In this task, we want to add a new excerpt field. An excerpt is an optional summary or teaser visible on the main page.
+
+  
+
+In the Post model, add a new field named excerpt using the TextField field type. As the excerpt is optional, the user must be able to leave this database row blank without throwing an error.
+
+Review the field options documentation here to find how to allow a field to be blank.
+
+Note: Remember to set DEBUG to True to ensure that you get detailed errors to ease debugging during development.
+
+Note: Because you haven't migrated, you won't see the excerpt field in the admin panel yet, but you will do this step in an upcoming migrations topic.
+
+Solution
+
+Compare your solution code with the source code.
+
+  
+
+Review
+
+Models are an integral part of a Django app as they are the definitive source of information on your data. The field attributes both tell the database what data to expect and define the HTML form elements in the admin panel.
+
+  
+
+As you saw in the author field, you defined a relationship between the Post and User models. The power of a relational database is due to the tables relating to one another. In the next topic, we will examine these database relationships in more detail.
+
+## Model relationships
+
+![[Pasted image 20240822120849.png]]The database you are using is a relational database. Django supports the three most common database relationship types. They are:
+
+1. many-to-one
+2. many-to-many
+3. one-to-one
+
+In this topic, we will dive deeper into related data in Django.
+
+- Challenge
+    
+    **Part 1 - Database relationships:**
+    
+    1. Which relationship type, many-to-many, many-to-one, or one-to-one, applies to each situation below:
+        1. An e-commerce app with Customer and Order models.
+        2. An app with a CapitalCity and Country models to list capital cities of their respective countries.
+        3. A pizza app with a Base and Topping model to list all the possible pizza bases and toppings.
+    
+    **Part 2 - Running your code:**
+    
+    Run your Heroku app in the browser, append **/admin** to the URL, and log in as the superuser.
+    
+    Click on the **Posts** option, then **Add**. 
+    
+    **Important**: Do not add any posts now, as other fields are still to be added to your Post model.
+    
+    1. In the Add Post form, the Author select input drop-down list has only one option, which is your superuser's name.
+        1. What do you think the `ForeignKey` field type does in **blog/models.py**? Where do you think the values shown in the browser's drop-down author selection come from?
+    2. What relationship do you think `Post` and `User` have with one another?
+    
+- Explanation
+    
+    **Part 1 - Database Relationships:**
+    
+    1. Each database relationship would be as follows:
+        1. This would be a many-to-one relationship because each customer can make many different orders, but all those orders must be delivered to the one customer who ordered them.
+        2. In this case, each country can only have one capital city, and each capital city can only be in one country. Therefore, the relationship would be one-to-one.
+        3. Finally, the pizza menu has many pizza base choices and many topping choices. Each pizza base can have multiple toppings, and each topping can be added to multiple bases. Therefore, this is a many-to-many relationship.
+    
+    **Part 2 - Running your code:**
+    
+    1. We used the `ForeignKey` field type to link one model to another. In this case, you can see that the current model, `Post`, is connected to the `User` model, as `User` has been added to the `ForeignKey` field type as an argument:
+        1. ```
+            class Post(models.Model):
+                # …
+                author = models.ForeignKey(
+                    User,
+                    on_delete=models.CASCADE,
+                    related_name="blog_posts"
+                )
+                # …
+            ```
+            
+        2. As a result, a dropdown list of all available users is there when choosing the blog post author's name.
+    2. Each blog post can have only one author, but each author can have multiple posts, so this would be a many-to-one relationship. As shown, you can use the ForeignKey to create a many-to-one type database relationship.
+    
+    ### Database relationships
+    
+    A model is a Python class that typically models a real-world object. The relationship between the Django models is the relationship between the real-world objects. The relationship between a Customer and an Order model is the same as between a customer and an order in a shop.
+    
+    For example, a single order will have one customer, but a customer can have many orders. Therefore, the relationship is many-to-one: Many Orders to one Customer.
+    
+    The purpose of a database relationship is twofold:
+    
+    1. It is easier to link a customer with their orders.
+    2. There is less data duplication, resulting in better database performance.
+    
+    ### Database relationship types
+    
+    Django supports the three most common database relationship types:
+    
+    1. As shown, the `ForeignKey` field type defines a many-to-one relationship. In the challenge example above, a single user could have many posts. Therefore, to create this relationship in the `Post` model, the customer attribute used `ForeignKey` with `User` passed as the argument.
+        1. ```
+            author = models.ForeignKey(
+                    User,
+                    on_delete=models.CASCADE,
+                    related_name="blog_posts"
+                ) 
+            ```
+            
+    2. A many-to-many relationship would use the `ManyToManyField` field type. You might have Pizza and Topping models if you have a pizzeria takeaway app. A topping can be on multiple pizzas, and a pizza can have multiple toppings. Therefore, your Pizza model might have the following field:
+        1. ```
+            toppings = models.ManyToManyField(Topping)
+            ```
+            
+        2. In this example, it does not matter whether the `ManyToManyField` field is in the Pizza or Toppings model as long as it is not in both.
+    3. For a one-to-one relationship, there is the field type of `OneToOneField`. Again, this field type takes the argument of the model class to be related. This relationship type is useful when one record in a table is only associated with one and only one in another table. If you have a model `Country` and another model `CapitalCity`, you could use a `OneToOneField` as a country has only one capital city, and a capital city is in only one country:
+        1. ```
+            class Country(models.Model):
+                # …
+                capital_city = models.OneToOneField(
+                    CapitalCity,
+                    on_delete=models.CASCADE,
+                    related_name="capital_of"
+                )
+                # …
+            ```
+            
+    
+    ### Explaining common arguments
+    
+    As shown in the example code above, there are two important arguments included:
+    
+    1. The `on_delete` argument emulates the behaviour of an SQL database when an author is deleted. As we have set this to `models.CASCADE:` if a user is deleted, then any posts they have authored will also be deleted. If, instead, you wanted to delete each post manually if their author was deleted, then you could set this to `RESTRICT`. It is important that `on_delete` is used as it will ensure database integrity.
+        1. Used for many-to-one, and one-to-one relationships but not many-to-many.
+    2. The `related_name` parameter is optional but is useful as it gives a meaningful name to the relation from the `User` model to the `Post`. Without it, Django would autogenerate the name of `author_set` for a query of a user's posts, which is not as semantic as `blog_posts`.
+    
+    ### What is a superuser?
+    
+    There are two types of users:
+    
+    1. a regular user.
+    2. a superuser.
+    
+    A superuser can be created using the `python3 manage.py createsuperuser` command in the terminal. They can access the admin panel, whereas a regular user cannot.
+    
+    If you go to the URL path **admin/auth/user/1/change** you will see that the **Superuser status** checkbox is checked. This box can be updated if you want to add or remove superuser permissions for specific users.
+    
+- Test your knowledge
+    
+    Below are two simple models from an events app.
+    
+    ```
+    # Create your models here.
+    
+    
+    class Event(models.Model):
+        event_name = models.CharField(max_length=200, unique=True)
+        location = models.CharField(max_length=200)
+        date = models.DateTimeField()
+    
+        def __str__(self):
+            return self.event_name
+    
+    
+    class Ticket(models.Model):
+        ticket_holder = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE,
+            related_name="users_tickets"
+        )
+        date_issued = models.DateTimeField(auto_now_add=True)
+    
+    
+        def __str__(self):
+            return f"Ticket for {self.ticket_holder}"
+    ```
+    
+    You must ensure tickets issued only give access to the correct event and not all events.
+    
+    1. Based on the description above, what type of database relationship should the `Ticket` have to the `Event`?
+    2. Given the example code above, what attribute and field type would you add to the `Ticket` model to relate it to the `Event` model?
+    3. What relationship does the `Ticket` have to the `User`?
+    
+- Solution
+    
+    ```
+    class Ticket(models.Model):
+        ticket_holder = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE,
+            related_name="users_tickets"
+        )
+        date_issued = models.DateTimeField(auto_now_add=True)
+        event = models.ForeignKey(
+            Event,
+            on_delete=models.CASCADE,
+            related_name="event_tickets"
+        )
+    
+        def __str__(self):
+            return f"Ticket for {self.ticket_holder}"
+    ```
+    
+    1. `Ticket` to `Event` is a many-to-one relationship, as many tickets will be issued for one `Event`.
+    2. The attribute could have any name, but `event` is a good semantic name. However, **meet**, **occasion**, **shindig**, or **soirée** would be equally good if the developers understood the meaning. The `ForeignKey` field type is used with the model class `Event` as an argument. The `on_delete` option is set to `models.CASCADE`, so if a user is removed from the database, there are no unassigned tickets in the database. A semantic `related_name` of something like `event_tickets` is better than the default `event_set` from Django.
+    3. `Ticket` to `User` is a many-to-one relationship, as one user can purchase many tickets.
+    
+- Review
+    
+    In this topic, you saw how Django models map to the three most common database relationship types. Once you have decided whether your data relationships are many-to-one, many-to-many or one-to-one, you'll know which field type you need. Django then does all the hard work of setting up the relational database.
+    
+    The next topic covers how the Python code is converted to SQL.
+
+
 Inside migrations
 You've already made and applied migrations to your database. In this topic, we will discuss what a migration is, what happens when you make migrations, and why you need to know this.
 
@@ -78,3 +1542,152 @@ Review
 In this topic, we learned what a migration is . We also looked deeper into what happens when we make a migration and learned something about my childhood obsession with LEGO! In our next topic, we'll take a deeper look into the admin.py file and see how we can use it to customise our admin page experience.
 
 Don't forget to add, commit and push your project to GitHub before continuing.
+
+
+## Inside admin.py
+
+You're now starting to see how all of the components in a Django app work together. An important part of Django is the back-end administration site. We will use the admin site to create our blog posts and approve comments. Let's have a deeper look into how we configure the admin panel.
+
+- Challenge
+    
+    Open the **admin.py** file in the **blog** directory.
+    
+    **Part 1 - admin.py:**
+    
+    1. What do you think the purpose of `admin.site.register(Post)` is?
+    2. Where does `Post` come from?
+    3. What is the significance of the dot before `models` on line 2?
+    
+    **Part 2 - CSRF tokens:**
+    
+    1. In **settings.py**, which websites are included as `CSRF_TRUSTED_ORIGINS`? What do you think this code might do?
+    
+- Explanation
+    
+    **Part 1 - admin.py:**
+    
+    1. When we create a custom model and we want it to appear in the admin site, then we need to tell Django by registering it in the **admin.py** file. That is what `admin.site.register` does.
+    2. If you said that `Post` refers to the **Post** model we just created, then well done! You're absolutely right. We import our custom **Post** model on line 2.
+    3. The dot in front of `models` on line 2 indicates that we are importing **Post** from a file named **models**, which is in the same directory as our **admin.py** file. If you have multiple models that you want to import, then you can separate them with a comma. For example, in future topics, you will create a **Comment** model, which will need to be imported at that point.
+    
+    **Part 2 - CSRF tokens:**
+    
+    1. The sites `"https://*.codeanyapp.com"` and `"https://*.herokuapp.com"` appear in the `CSRF_TRUSTED_ORIGINS` list. This allows both your development server and Heroku (your production server) to add blog posts using the Django admin panel. We will discuss CSRF in more detail below.
+    
+    ### Using admin.py
+    
+    It is worth noting that the `admin.site.register` method takes only one argument. If you are registering multiple models, you would need a separate line for each model. The code for multiple models would look like this:
+    
+    ```
+    from django.contrib import admin
+    from .models import Post, Comment
+    
+    # Register your models here.
+    admin.site.register(Post)
+    admin.site.register(Comment)
+    ```
+    
+    Each app has its own **admin.py** file so that you can configure the admin site across multiple apps. You can do much more with **admin.py** than we have done here. We'll see how in future topics.
+    
+    Finally, let's have a brief conversation about why you had to set `CSRF_TRUSTED_ORIGINS` in **settings.py** in order to use the admin panel.
+    
+    ### What are CSRF tokens?
+    
+    CSRF stands for Cross-Site Request Forgery**.** In simple terms, imagine you were scrolling through your favourite social media site and looking at pictures of cats. A post pops up that says, "Click here to see a video of cats wearing tuxedos". Of course, such a link is too much to resist. When you click on it, you are directed to a site outside the social network. This site contains some specially-crafted code that sends a secret request to the social media site pretending to be you. Without you knowing, it makes changes to your account, maybe even sending messages to your friends or changing your password!
+    
+    This kind of sneaky behaviour is what CSRF is all about — it's when an attacker's website tries to make requests to another site on your behalf.
+    
+    Fortunately, Django protects us from that. The `CSRF_TRUSTED_ORIGINS` setting ensures that the only requests allowed are ones originating from hosts in the list. That's why Django blocks access to the admin site if you don't have the correct host setting in there.
+    
+    That's not the only way that Django protects you from CSRF attacks. You'll see another way later.
+    
+- Test your knowledge
+    
+    1. Just to confirm that I've been telling you the truth, comment out the `admin.site.register(Post)` line, and access the admin site on the local server again. Can you still see the admin options for **Posts**?
+    2. Uncomment the line and try again. Has **Posts** reappeared?
+    
+- Solution
+    
+    1. When you comment out the line, you can no longer perform administration tasks on **Posts**.
+    2. Adding it back registers the **Post** model with the admin site, which then appears as **Posts.**
+    
+    **Note**: This would not change on your Heroku admin page unless you push to GitHub and deploy to Heroku.
+    
+- Review
+    
+    The admin site is an integral part of managing your Django application. The **admin.py** file is where we register our custom models so that they can be accessed through the admin panel. We have also seen how Django protects us from CSRF attacks.
+    
+    In our next topic, we'll start adding some blog content using the admin site.
+
+1. Well done for getting to this point.
+2. You've learned how to create basic models in Django, and how to migrate the
+3. changes you made in code to the database.
+4. It's been quite a ride, but hopefully we've managed to
+5. demystify models for you a bit.
+6. In this video, we'll review some of the core concepts of models.
+7. We'll also consider why database relationships are important.
+8. We'll help you to see how models fit into the broader context of your
+9. project, and we'll consider what the admin panel allows us to do.
+10. A model then is a, actually no, pause the video and think about
+11. how you would define a model.
+12. Just take two minutes and then come back to see if your
+13. definition is the same as mine.
+14. Welcome back.
+15. So a model is a Python class that defines the structure of a database table.
+16. If that's similar to what you came up with, then well done.
+17. And bonus points if you mentioned Lego, by the way.
+18. Within the class, we then define fields and their relationships
+19. to fields in other tables.
+20. Fields are the named places where we store single pieces of data, such as a person's
+21. name, their email address, or password.
+22. Conceptually, we think of a database kind of like a spreadsheet, where
+23. the field names are columns, and a row consists of all of the individual
+24. pieces of data for a record.
+25. Which could be a user, as seen on the screen, an order, or even a blog post.
+26. Database tables often require relationships between each other.
+27. In this lesson, you saw how to do that using Django's foreign key to
+28. create a many- to- one relationship between the many blog posts that
+29. we expect one user to write.
+30. Relationships are among the trickier database concepts to grasp.
+31. So that's why it's important to create entity relationship
+32. diagrams to make things easier.
+33. At this point, you might be thinking that I'm intentionally
+34. trying to make things hard for you.
+35. Why bother with relationships at all?
+36. Why not just store everything in one big table?
+37. Well, this works well until a piece of underlying data needs to change.
+38. Let's take our blog app for example.
+39. Imagine that we decide to remove the relationship with user.
+40. Instead of selecting the username, our author just types the username in instead.
+41. So let's say that Niel writes 15 blog posts under the username niel.
+42. One day, Niel changes his username to niel_the_wizard, because
+43. Niel is, indeed, a wizard.
+44. This is fine for all new blog posts.
+45. But what about the 15 he already created?
+46. The username would need to be changed here manually.
+47. It would be much better if it could be changed in just one place.
+48. And then all of the instances would update.
+49. Well, that's why we need relationships.
+50. In this example, Niel could just update his username in the users table and
+51. it will be updated everywhere else.
+52. Relationships help to keep our data consistent.
+53. The terminology for this is normalisation.
+54. As databases get bigger with more tables and more records, it's important to
+55. keep data as normalised as possible.
+56. For this, relationships are needed.
+57. We also looked at migrations in this lesson, which is how your model code
+58. becomes reflected in the database.
+59. If the fields and relationships are our Lego blocks, then the migrations are the
+60. blueprints or building plans for Django to build or extend the database for us.
+61. Models and migrations are a vital part of Django.
+62. All full-stack projects require a database, and so understanding how
+63. models and migrations work is critical to becoming a Django developer.
+64. The final area we covered in this lesson was Django's powerful admin panel.
+65. We learned both how to access it and how to customise it.
+66. This allows us to perform create, read, update and delete or CRUD
+67. operations on our project, but only if we're a super user.
+68. We'll need to do more on the front end to add in CRUD operations for our end users.
+69. Now that we've created some simple models, review the steps
+70. required before moving on.
+71. That way you'll have a good idea around the model creation process
+72. when it comes to designing your own.
