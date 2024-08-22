@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Every model you create is a Python class that subclasses the parent class of # models.Model.
+# Every model you create is a Python class that
+# subclasses the parent class of # models.Model.
 
 
 # Create your models here.
