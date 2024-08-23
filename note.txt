@@ -1,86 +1,92 @@
-Template inheritance
-We're now going to take a more detailed look at an important feature of Django, namely template inheritance.
+Building a blog post view
+In these text-based steps, we will create a view for a single blog post along with it's associated URL and template. 
 
-Challenge
-Look at the styled blog homepage, as seen in the topic image. Now, open the index.html and base.html files.
+Up until now, your user has been able to browse many posts, but now we'll fulfil the user story to view a single blog post.
 
-Which HTML file contains the header and footer? Which contains the code for the list of blog posts?
-Can you identify the special bit of code in base.html that links it to index.html?
-What special bits of code in index.html link it to base.html?
-Explanation
-The base.html file contains the header and footer, but the index.html file is where the code to display the list of blog posts appears.
-In base.html, we have the following code:
-{% block content %}
-    <!-- Content Goes here -->
-{% endblock content %}
-Here, we define a block. Our base.html file is a skeleton HTML document. It's the job of the child templates to fill these blocks with content.
-In index.html, we have two bits of code that link it back to base.html.
-{% extends "base.html" %}
-{% block content %}
+Prerequisites
+1. Move the Open a post user story into In Progress.
 
-<!-- index.html content starts here -->
-…
-<!-- index.html content ends here -->
-{% endblock %}
-First, we have an extends tag. This tells index.html that it is a child template of base.html. Then, everything we have inside our block fills the corresponding blocks in base.html, giving us a fully rendered web page.
-Why inherit?
-You may be wondering if it would be simpler to just write everything inside one HTML file. Then, we don't need to worry about blocks and extends. It would be if our project were only going to have one page. For projects with multiple pages (which is pretty much all of them), defining a base HTML page allows us to keep the look and feel of our site consistent. Imagine the base.html page is like a picture frame. We can put whatever picture we want inside, but the frame remains the same.
+Move the Open a post user story into In Progress
+2. Set your DEBUG value to True.
 
-Section of index.html created from the base.html
-Template inheritance also ties in nicely with the programming principle of DRY - Don't Repeat Yourself. Our header, navigation bar and footer are common across all pages. Using inheritance, we only need to write them once. After that, we can inject the content from each page into named blocks.
+Set your DEBUG value to True
+Write the code
+3. Add a new path for post_detail in the blog/urls.py file.
 
-Finding our templates
-How does Django know where to find the templates?
+path('<slug:slug>/', views.post_detail, name='post_detail'),
+Note: Don't forget the trailing slash after the slug.
 
-That is controlled by the TEMPLATES setting in settings.py.
-The DIRS key tells Django which directories to look in. This is a Python list, so we add the TEMPLATES_DIR variable, which was set at the top of settings.py.
-The TEMPLATES setting also has APP_DIRS set to True, which means that Django will also look for a templates directory inside all our app directories.
-Finally, in our project, we set TEMPLATES_DIR value to the templates directory in our base, or top-level directory.
-Bits about blocks
-All the block and endblock tags do is tell Django's templating engine that a child template may fill them with content.
+Update path to use slug
+4. Within the index.html template's for-loop, update the anchor element to point to the post_detail view.
 
-{% block content %}
-    <!-- Content Goes here -->
-{% endblock content %}
-As you can see, blocks are also named. In this project, we named our block content because, not surprisingly, our page content goes into it. We can give blocks any name we like, and a template may contain several blocks that a child template may or may not fill. For example, we could have a block called sidebar that the child template could use to populate a side navigation bar, if one existed.
+<a href="{% url 'post_detail' post.slug %}" class="post-link">
+Note: This uses the name, post_detail from the urlpattern and the slug variable value is accessed with the same dot notation as seen for author, title, excerpt and so on.
 
-In our project, we will only have one block named content, but feel free to add more blocks with different names to your own projects.
+Update post detail anchor in index template
+5. Open the blog/views.py file and add a post_detail function-based view.
 
-Loading more than one block
-If you have more than one block in your base template, you don't need to create separate files for each of them. In the sidebar example above, we would put both the content and the sidebar in our index.html file. When index.html is loaded, Django will only populate the blocks that exist in the child template; otherwise, the block will be left empty.
+def post_detail(request, slug):
+    """
+    Display an individual :model:`blog.Post`.
 
-If you wanted, you could also put some default content inside the block in your base template. If the child template chooses to populate that block, then the default content would then be overwritten.
+    **Context**
 
-For example, you could add this to base.html:
+    ``post``
+        An instance of :model:`blog.Post`.
 
-{% block content %}
-    <p>This is my default paragraph</p>
-{% endblock content %}
-Test your knowledge
-In the base.html template, locate the text that says Made by Code Instituters.
-Replace this text with a block tag named copyright and a corresponding endblock tag.
-Inside your new block add some default text. You can use Made by Code Instituters if you wish.
-In index.html, add your new copyright block beneath the existing endblock tag. Between the tags, add Copyright 2023 and your name.
-Save all of the files and hard refresh the app. What do you see?
-Your homepage should look like this:
+    **Template:**
 
-How the homepage should look
-Solution
-The paragraph in base.html should look like this:
+    :template:`blog/post_detail.html`
+    """
 
-<p class="m-0 text-center text-white">
-    {% block copyright %}
-        Made by Code Instituters
-    {% endblock copyright %}
-</p>
-My index.html now has this after the endblock tag:
+    queryset = Post.objects.filter(status=1)
+    post = get_object_or_404(queryset, slug=slug)
 
-{% block copyright %}
-    Copyright 2023 Matt Rudge
-{% endblock %}
-If the copyright block exists in a child template, as we have here, the default Made by Code Instituters content will be overwritten; otherwise, the default content will appear instead.
+    return render(
+        request,
+        "blog/post_detail.html",
+        {"post": post},
+    )
+Add post detail view
+6. Append the get_object_or_404 method to the import from django.shortcuts.
 
-Review
-We have looked at the powerful features of template inheritance in Django and seen how it helps us to keep a consistent look and feel in our projects. Next, we'll look at how to add even more flexibility with variables and control structures.
+from django.shortcuts import render, get_object_or_404
+Import get_object_or_404
+7. Create an images directory in the existing static directory.
 
-Don't forget to add, commit and push your code before continuing on.
+Add an images directory
+8. Download a default image from here to your computer. Then upload it to the static/images directory.
+
+Default image
+9. Create a new post_detail.html file in the blog/templates/blog directory.
+
+Create a new post_detail.html file 
+10. Open the post_detail.html file and add all of the code in this file.
+
+Note: This code includes the link to the static image you just uploaded.
+
+Post detail template
+11. Collect the new static files to the staticfiles directory. Type yes when prompted to overwrite the existing files.
+
+python3 manage.py collectstatic
+Note: Only the one new image file in static was copied to staticfiles.
+
+Source code
+
+Collect static image file
+Deployment
+12. Set DEBUG to False. Git add, commit and push the code to GitHub.
+
+git add --all
+git commit -m "added post_detail view"
+git push origin main
+Set DEBUG to False
+13. Open your project's Heroku dashboard and click the deploy tab and Deploy Branch.
+
+Deploy main branch.
+14. Open the app.
+
+Open the app
+15. Click on any of the posts to view it in detail.
+
+Note: The default image is used for all posts
