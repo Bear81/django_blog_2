@@ -1,40 +1,86 @@
-Adding more posts
-In these text-based steps, we'll explore fixtures in Django. So far, when you've needed a blog post to test your code, you've added it by hand through the admin panel. But soon, lessons like pagination will need many posts to show results. Adding them one by one would be tedious.
+Template inheritance
+We're now going to take a more detailed look at an important feature of Django, namely template inheritance.
 
-Enter fixtures: they help move data into databases. Think of a fixture as a file containing data tailored to your database. You can use it to save database contents or, as we'll see here, to fill a database for development. We'll work with a JSON fixture, but Django also supports XML and YAML.
+Challenge
+Look at the styled blog homepage, as seen in the topic image. Now, open the index.html and base.html files.
 
-To get up and running, follow the steps below.
+Which HTML file contains the header and footer? Which contains the code for the list of blog posts?
+Can you identify the special bit of code in base.html that links it to index.html?
+What special bits of code in index.html link it to base.html?
+Explanation
+The base.html file contains the header and footer, but the index.html file is where the code to display the list of blog posts appears.
+In base.html, we have the following code:
+{% block content %}
+    <!-- Content Goes here -->
+{% endblock content %}
+Here, we define a block. Our base.html file is a skeleton HTML document. It's the job of the child templates to fill these blocks with content.
+In index.html, we have two bits of code that link it back to base.html.
+{% extends "base.html" %}
+{% block content %}
 
-Adding fixtures
-1. Open your project in your IDE and add a directory within your blog app named fixtures.
+<!-- index.html content starts here -->
+…
+<!-- index.html content ends here -->
+{% endblock %}
+First, we have an extends tag. This tells index.html that it is a child template of base.html. Then, everything we have inside our block fills the corresponding blocks in base.html, giving us a fully rendered web page.
+Why inherit?
+You may be wondering if it would be simpler to just write everything inside one HTML file. Then, we don't need to worry about blocks and extends. It would be if our project were only going to have one page. For projects with multiple pages (which is pretty much all of them), defining a base HTML page allows us to keep the look and feel of our site consistent. Imagine the base.html page is like a picture frame. We can put whatever picture we want inside, but the frame remains the same.
 
-Create a new fixtures directory within the blog app
-2. Within the blog/fixtures directory, create a new file named posts.json.
+Section of index.html created from the base.html
+Template inheritance also ties in nicely with the programming principle of DRY - Don't Repeat Yourself. Our header, navigation bar and footer are common across all pages. Using inheritance, we only need to write them once. After that, we can inject the content from each page into named blocks.
 
-Create a new posts.json file within the fixtures directory
-3. Copy and paste the JSON from this source file to your posts.json file.
+Finding our templates
+How does Django know where to find the templates?
 
-Add json posts to posts.json
-4. Now load the data to the database table using the fixture name of posts. Django knows where to look for the file, as it is stored in the fixtures directory by default, e.g. blog/fixtures/posts.json
+That is controlled by the TEMPLATES setting in settings.py.
+The DIRS key tells Django which directories to look in. This is a Python list, so we add the TEMPLATES_DIR variable, which was set at the top of settings.py.
+The TEMPLATES setting also has APP_DIRS set to True, which means that Django will also look for a templates directory inside all our app directories.
+Finally, in our project, we set TEMPLATES_DIR value to the templates directory in our base, or top-level directory.
+Bits about blocks
+All the block and endblock tags do is tell Django's templating engine that a child template may fill them with content.
 
-python3 manage.py loaddata posts
-Load posts.json data to table
-5. You can now add blog/fixtures/ to the .gitignore file.
+{% block content %}
+    <!-- Content Goes here -->
+{% endblock content %}
+As you can see, blocks are also named. In this project, we named our block content because, not surprisingly, our page content goes into it. We can give blocks any name we like, and a template may contain several blocks that a child template may or may not fill. For example, we could have a block called sidebar that the child template could use to populate a side navigation bar, if one existed.
 
-Note: You can keep the directory locally, as this technique will be helpful in the future if you run into database errors.
+In our project, we will only have one block named content, but feel free to add more blocks with different names to your own projects.
 
-Git ignoring the fixtures file
-View data
-6. Run the Django server in the workspace terminal and open the browser. Append /admin to the browser URL. Log in to the admin dashboard with the superuser credentials (if you are not already).
+Loading more than one block
+If you have more than one block in your base template, you don't need to create separate files for each of them. In the sidebar example above, we would put both the content and the sidebar in our index.html file. When index.html is loaded, Django will only populate the blocks that exist in the child template; otherwise, the block will be left empty.
 
-Log into the dashboard
-7. Click on Posts and view the newly added posts.
+If you wanted, you could also put some default content inside the block in your base template. If the child template chooses to populate that block, then the default content would then be overwritten.
 
-Note: The newly added posts appear to have been created on a date before the ones you added yourself. The created_on date for the newly added posts is the date in the JSON file, not the current date. Therefore, they appear older than the posts you added from the admin panel.
+For example, you could add this to base.html:
 
-Confirm the posts were added.
+{% block content %}
+    <p>This is my default paragraph</p>
+{% endblock content %}
+Test your knowledge
+In the base.html template, locate the text that says Made by Code Instituters.
+Replace this text with a block tag named copyright and a corresponding endblock tag.
+Inside your new block add some default text. You can use Made by Code Instituters if you wish.
+In index.html, add your new copyright block beneath the existing endblock tag. Between the tags, add Copyright 2023 and your name.
+Save all of the files and hard refresh the app. What do you see?
+Your homepage should look like this:
+
+How the homepage should look
+Solution
+The paragraph in base.html should look like this:
+
+<p class="m-0 text-center text-white">
+    {% block copyright %}
+        Made by Code Instituters
+    {% endblock copyright %}
+</p>
+My index.html now has this after the endblock tag:
+
+{% block copyright %}
+    Copyright 2023 Matt Rudge
+{% endblock %}
+If the copyright block exists in a child template, as we have here, the default Made by Code Instituters content will be overwritten; otherwise, the default content will appear instead.
+
 Review
-This topic is an aside on using fixtures to add posts. The usual procedure in the lessons to add data is to use the admin panel. However, fixtures are valuable during Django project development when you require a large dataset for testing or to demonstrate the outcome of a piece of code. If you lose your database table contents due to an error, then this is a quick way to repopulate the table.
+We have looked at the powerful features of template inheritance in Django and seen how it helps us to keep a consistent look and feel in our projects. Next, we'll look at how to add even more flexibility with variables and control structures.
 
-As a developer, you will find this technique helpful to populate a database with dummy data to demonstrate a working project to colleagues, clients or a prospective employer.
-
+Don't forget to add, commit and push your code before continuing on.
